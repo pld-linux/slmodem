@@ -140,7 +140,7 @@ touch include/config/MARKER
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,sysconfig}
-install -d $RPM_BUILD_ROOT{%{_sbindir},/lib/modules/%{_kernel_ver}{,smp}/misc}
+install -d $RPM_BUILD_ROOT{%{_sbindir},/lib/modules/%{_kernel_ver}{,smp}/misc,%{_var}/lib/%{name}}
 
 install modem/slmodemd $RPM_BUILD_ROOT%{_sbindir}
 install modem/modem_test $RPM_BUILD_ROOT%{_sbindir}/slmodem-test
@@ -205,7 +205,9 @@ fi
 %attr(755,root,root) %{_sbindir}/*
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not mtime md5 size) /etc/sysconfig/%{name}
+%dir %{_var}/lib/%{name}
 
+%if %{with up}
 %files -n kernel-char-slmodem-amr
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/slamr.*o*
@@ -213,7 +215,9 @@ fi
 %files -n kernel-char-slmodem-usb
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/slusb.*o*
+%endif
 
+%if %{with smp}
 %files -n kernel-smp-char-slmodem-amr
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}smp/misc/slamr.*o*
@@ -221,3 +225,4 @@ fi
 %files -n kernel-smp-char-slmodem-usb
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}smp/misc/slusb.*o*
+%endif
