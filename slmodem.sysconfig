@@ -1,0 +1,16 @@
+# Customized setings
+
+# Define nice level
+SERVICE_RUN_NICE_LEVEL="+0"
+
+SLMODEMD_DEVICE=slamr0
+# slmodemd --countrylist
+#SLMODEMD_COUNTRY=USA
+SLMODEMD_COUNTRY=POLAND
+
+SLMODEMD_GROUP=ttyS
+SLMODEMD_PERMS=660
+
+# additional options
+#SLMODEMD_OPTS="--alsa"
+

@@ -1,0 +1,72 @@
+#!/bin/sh
+#
+# slmodemd		slmodemd (SMLink modem)
+#
+# chkconfig:	345 5 95
+#
+# description:	slmodemd is a modem daemon.
+
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+# Get network config
+. /etc/sysconfig/network
+
+# Get service config
+[ -f /etc/sysconfig/slmodem ] && . /etc/sysconfig/slmodem
+
+[ -z "$SLMODEMD_COUNTRY" ] && SLMODEMD_COUNTRY=USA
+[ -z "$SLMODEMD_DEVICE" ] && SLMODEMD_DEVICE=slamr0
+[ -z "$SLMODEMD_GROUP" ] && SLMODEMD_GROUP=ttyS
+[ -z "$SLMODEMD_PERMS" ] && SLMODEMD_PERMS=660
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+	# Check if the service is already running?
+	if [ ! -f /var/lock/subsys/slmodemd ]; then
+		msg_starting slmodemd
+		modprobe -s slamr
+		daemon /usr/sbin/slmodemd --make-pidfile --background --quiet -- -c $SLMODEMD_COUNTRY -g $SLMODEMD_GROUP -p $SLMODEMD_PERMS $SLMODEMD_OPTS /dev/$SLMODEMD_DEVICE
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/slmodemd		
+	else
+		msg_already_running slmodemd
+	fi
+	;;
+  stop)
+        if [ -f /var/lock/subsys/slmodemd ]; then
+		msg_stopping slmodemd
+		killproc slmodemd
+		rm -f /var/run/clamav/slmodemd.pid /var/lock/subsys/slmodemd >/dev/null 2>&1
+	else
+		msg_not_running slmodemd
+	fi	
+	;;
+  restart)
+	$0 stop
+	$0 start
+	exit $?
+	;;
+  status)
+	status slmodemd
+	exit $?
+	;;
+  reload|force-reload)
+	if [ -f /var/lock/subsys/slmodemd ]; then
+		msg_reloading slmodemd
+		killproc slmodemd -HUP
+		RETVAL=$?
+	else
+		msg_not_running slmodemd >&2
+		RETVAL=7
+	fi
+	;;
+  *)
+	msg_usage "$0 {start|stop|restart|reload|force-reload|status}"
+	exit 3
+esac
+
+exit $RETVAL
