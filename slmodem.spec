@@ -25,7 +25,6 @@ Group:		Base/Kernel
 # ftp://ftp.smlink.com/linux/unsupported/
 Source0:	http://www.smlink.com/main/down/%{name}-%{version}.tar.gz
 # Source0-md5:	cbc4918f2ee9ed4952d3f4309d364b35
-# Source0-size:	806884
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Patch0:		%{name}-new-kernel-workaround.patch
