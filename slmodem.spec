@@ -9,15 +9,15 @@
 Summary:	Smart Link soft modem drivers
 Summary(pl):	Sterowniki do modemów programowych Smart Link
 Name:		slmodem
-Version:	2.9.6
-%define	rel	0.1
+Version:	2.9.7
+%define	rel	1
 Release:	%{rel}
 License:	BSD almost without source
 Vendor:		Smart Link Ltd.
 Group:		Base/Kernel
 # ftp://ftp.smlink.com/linux/unsupported/
 Source0:	ftp://ftp.smlink.com/linux/unsupported/%{name}-%{version}.tar.gz
-# Source0-md5:	ab6bdd1372fc6071c51a93697de177e9
+# Source0-md5:	741aec69a9cdb95fbce21105b4f1924c
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 URL:		http://www.smlink.com/
