@@ -161,7 +161,7 @@ install %{SOURCE2}	 $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 %endif
 
 %if %{with kernel}
-%if %{with_dist_kernel}
+%if %{with dist_kernel}
 for mod in *-nondist.ko; do
 	nmod=$(echo "$mod" | sed -e 's#-nondist##g')
 	install $mod $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/$nmod
