@@ -3,10 +3,10 @@
 # 
 # Conditional build:
 %bcond_without	dist_kernel	# without kernel from distribution
-%bcond_without  kernel          # don't build kernel modules
-%bcond_without  smp             # don't build SMP module
-%bcond_without  userspace       # don't build userspace module
-%bcond_with     verbose         # verbose build (V=1)
+%bcond_without	kernel		# don't build kernel modules
+%bcond_without	smp		# don't build SMP module
+%bcond_without	userspace	# don't build userspace module
+%bcond_with	verbose		# verbose build (V=1)
 #
 Summary:	Smart Link soft modem drivers
 Summary(pl):	Sterowniki do modemów programowych Smart Link
@@ -68,7 +68,7 @@ driver for SmartUSB56 based USB modem.
 
 %description -n kernel-char-slmodem-usb -l pl
 Sterowniki j±dra Linuksa dla modemów programowych Smart Link. Ten
-pakiet zawiera sterownik dla modemów USB opartych  na SmartUSB56.
+pakiet zawiera sterownik dla modemów USB opartych na SmartUSB56.
 
 %package -n kernel-smp-char-slmodem-amr
 Summary:	Linux kernel driver for Smart Link soft modem AMR/PCI component (SMP)
@@ -102,7 +102,7 @@ driver for SmartUSB56 based USB modem. SMP kernels.
 
 %description -n kernel-smp-char-slmodem-usb -l pl
 Sterowniki j±dra Linuksa dla modemów programowych Smart Link. Ten
-pakiet zawiera sterownik dla modemów USB opartych  na SmartUSB56. J±dra SMP.
+pakiet zawiera sterownik dla modemów USB opartych na SmartUSB56. J±dra SMP.
 
 %prep
 %setup -q
@@ -114,31 +114,30 @@ cp amrlibs.o ..
 %if %{with kernel}
 # kernel module(s)
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-    if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-        exit 1
-    fi
-    rm -rf include
-    install -d include/{linux,config}
-    ln -sf %{_kernelsrcdir}/config-$cfg .config
-    ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
-    ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
-    touch include/config/MARKER
-#
-#       patching/creating makefile(s) (optional)
-#
-    %{__make} -C %{_kernelsrcdir} clean \
-        RCS_FIND_IGNORE="-name '*.ko' -o" \
-        M=$PWD O=$PWD \
-        %{?with_verbose:V=1}
-    ln -sf ../amrlibs.o amrlibs.o
-    %{__make} -C %{_kernelsrcdir} modules \
-        CC="%{__cc}" CPP="%{__cpp}" \
-        M=$PWD O=$PWD \
-        %{?with_verbose:V=1}
-    for mod in *.ko; do
-	mod=$(echo "$mod" | sed -e 's#\.ko##g')
-	mv $mod.ko ../$mod-$cfg.ko
-    done
+	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+		exit 1
+	fi
+	rm -rf include
+	install -d include/{linux,config}
+	ln -sf %{_kernelsrcdir}/config-$cfg .config
+	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+	touch include/config/MARKER
+	
+	# patching/creating makefile(s) (optional)
+	%{__make} -C %{_kernelsrcdir} clean \
+		RCS_FIND_IGNORE="-name '*.ko' -o" \
+		M=$PWD O=$PWD \
+		%{?with_verbose:V=1}
+	ln -sf ../amrlibs.o amrlibs.o
+	%{__make} -C %{_kernelsrcdir} modules \
+		CC="%{__cc}" CPP="%{__cpp}" \
+		M=$PWD O=$PWD \
+		%{?with_verbose:V=1}
+	for mod in *.ko; do
+		mod=$(echo "$mod" | sed -e 's#\.ko##g')
+		mv $mod.ko ../$mod-$cfg.ko
+	done
 done
 %endif
 
@@ -153,10 +152,10 @@ install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,sysconfig}
 install -d $RPM_BUILD_ROOT{%{_sbindir},/lib/modules/%{_kernel_ver}{,smp}/misc,%{_var}/lib/%{name}}
 
 %if %{with userspace}
-install modem/slmodemd $RPM_BUILD_ROOT%{_sbindir}
+install modem/slmodemd	 $RPM_BUILD_ROOT%{_sbindir}
 install modem/modem_test $RPM_BUILD_ROOT%{_sbindir}/slmodem-test
-install %{SOURCE1}      $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
-install %{SOURCE2}      $RPM_BUILD_ROOT/etc/sysconfig/%{name}
+install %{SOURCE1}	 $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+install %{SOURCE2}	 $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 %endif
 
 %if %{with kernel}
@@ -202,17 +201,17 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /sbin/chkconfig --add %{name}
 if [ -f /var/lock/subsys/%{name} ]; then
-        /etc/rc.d/init.d/%{name} restart >&2
+	/etc/rc.d/init.d/%{name} restart >&2
 else
-        echo "Run \"/etc/rc.d/init.d/%{name} start\" to start %{name} daemon." >&2
+	echo "Run \"/etc/rc.d/init.d/%{name} start\" to start %{name} daemon." >&2
 fi
 
 %preun
 if [ "$1" = "0" ]; then
-        if [ -f /var/lock/subsys/%{name} ]; then
-                /etc/rc.d/init.d/%{name} stop
-        fi
-        /sbin/chkconfig --del %{name}
+	if [ -f /var/lock/subsys/%{name} ]; then
+		/etc/rc.d/init.d/%{name} stop
+	fi
+	/sbin/chkconfig --del %{name}
 fi
 
 %if %{with userspace}
