@@ -3,13 +3,15 @@
 # 
 # Conditional build:
 %bcond_without	dist_kernel	# without kernel from distribution
+%bcond_without  kernel          # don't build kernel modules
 %bcond_without  smp             # don't build SMP module
-%bcond_without  up              # don't build UP module
+%bcond_without  userspace       # don't build userspace module
+%bcond_with     verbose         # verbose build (V=1)
 #
 Summary:	Smart Link soft modem drivers
 Summary(pl):	Sterowniki do modemów programowych Smart Link
 Name:		slmodem
-Version:	2.9.7
+Version:	2.9.8
 %define	rel	1
 Release:	%{rel}
 License:	BSD almost without source
@@ -17,7 +19,7 @@ Vendor:		Smart Link Ltd.
 Group:		Base/Kernel
 # ftp://ftp.smlink.com/linux/unsupported/
 Source0:	ftp://ftp.smlink.com/linux/unsupported/%{name}-%{version}.tar.gz
-# Source0-md5:	741aec69a9cdb95fbce21105b4f1924c
+# Source0-md5:	3ff4154b50e13cdb443896d71926a8c3
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 URL:		http://www.smlink.com/
@@ -105,56 +107,69 @@ pakiet zawiera sterownik dla modemów USB opartych  na SmartUSB56. J±dra SMP.
 %setup -q
 
 %build
-cp -r drivers drivers-smp
-
 cd drivers
+cp amrlibs.o ..
 
-%if %{with up}
-ln -sf %{_kernelsrcdir}/config-up .config
-install -d include/{linux,config}
-ln -sf %{_kernelsrcdir}/include/linux/autoconf-up.h include/linux/autoconf.h
-ln -sf %{_kernelsrcdir}/include/asm-%{_arch} include/asm
-touch include/config/MARKER
-%{__make} -C %{_kernelsrcdir} modules \
-        SUBDIRS=$PWD \
-        O=$PWD \
-        V=1
+%if %{with kernel}
+# kernel module(s)
+for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
+    if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+        exit 1
+    fi
+    rm -rf include
+    install -d include/{linux,config}
+    ln -sf %{_kernelsrcdir}/config-$cfg .config
+    ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+    ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+    touch include/config/MARKER
+#
+#       patching/creating makefile(s) (optional)
+#
+    %{__make} -C %{_kernelsrcdir} clean \
+        RCS_FIND_IGNORE="-name '*.ko' -o" \
+        M=$PWD O=$PWD \
+        %{?with_verbose:V=1}
+    ln -sf ../amrlibs.o amrlibs.o
+    %{__make} -C %{_kernelsrcdir} modules \
+        CC="%{__cc}" CPP="%{__cpp}" \
+        M=$PWD O=$PWD \
+        %{?with_verbose:V=1}
+    for mod in *.ko; do
+	mod=$(echo "$mod" | sed -e 's#\.ko##g')
+	mv $mod.ko ../$mod-$cfg.ko
+    done
+done
 %endif
 
-%if %{with smp}
-cd ../drivers-smp
-ln -sf %{_kernelsrcdir}/config-smp .config
-rm -rf include
-install -d include/{linux,config}
-ln -sf %{_kernelsrcdir}/include/linux/autoconf-smp.h include/linux/autoconf.h
-ln -sf %{_kernelsrcdir}/include/asm-%{_arch} include/asm
-touch include/config/MARKER
-%{__make} -C %{_kernelsrcdir} modules \
-        SUBDIRS=$PWD \
-        O=$PWD \
-        V=1
+%if %{with userspace}
+%{__make} -C ../modem \
+	CC="%{__cc}"
 %endif
-
-%{__make} -C ../modem
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,sysconfig}
 install -d $RPM_BUILD_ROOT{%{_sbindir},/lib/modules/%{_kernel_ver}{,smp}/misc,%{_var}/lib/%{name}}
 
+%if %{with userspace}
 install modem/slmodemd $RPM_BUILD_ROOT%{_sbindir}
 install modem/modem_test $RPM_BUILD_ROOT%{_sbindir}/slmodem-test
-
-%if %{with up}
-install drivers/*.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc
+install %{SOURCE1}      $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+install %{SOURCE2}      $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 %endif
 
+%if %{with kernel}
+for mod in *-up.ko; do
+	nmod=$(echo "$mod" | sed -e 's#-up##g')
+	install $mod $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/$nmod
+done
 %if %{with smp}
-install drivers-smp/*.ko $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc
+for mod in *-smp.ko; do
+	nmod=$(echo "$mod" | sed -e 's#-smp##g')
+	install $mod $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/$nmod
+done
 %endif
-
-install %{SOURCE1}	$RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
-install %{SOURCE2}	$RPM_BUILD_ROOT/etc/sysconfig/%{name}
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -199,6 +214,7 @@ if [ "$1" = "0" ]; then
         /sbin/chkconfig --del %{name}
 fi
 
+%if %{with userspace}
 %files
 %defattr(644,root,root,755)
 %doc COPYING README* Changes
@@ -206,8 +222,9 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 %attr(640,root,root) %config(noreplace) %verify(not mtime md5 size) /etc/sysconfig/%{name}
 %dir %{_var}/lib/%{name}
+%endif
 
-%if %{with up}
+%if %{with kernel}
 %files -n kernel-char-slmodem-amr
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/slamr.*o*
@@ -215,7 +232,6 @@ fi
 %files -n kernel-char-slmodem-usb
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/slusb.*o*
-%endif
 
 %if %{with smp}
 %files -n kernel-smp-char-slmodem-amr
@@ -225,4 +241,5 @@ fi
 %files -n kernel-smp-char-slmodem-usb
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}smp/misc/slusb.*o*
+%endif
 %endif
