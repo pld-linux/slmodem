@@ -161,6 +161,12 @@ install %{SOURCE2}	 $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 %endif
 
 %if %{with kernel}
+%if %{with_dist_kernel}
+for mod in *-nondist.ko; do
+	nmod=$(echo "$mod" | sed -e 's#-nondist##g')
+	install $mod $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/$nmod
+done
+%else
 for mod in *-up.ko; do
 	nmod=$(echo "$mod" | sed -e 's#-up##g')
 	install $mod $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/$nmod
@@ -170,6 +176,7 @@ for mod in *-smp.ko; do
 	nmod=$(echo "$mod" | sed -e 's#-smp##g')
 	install $mod $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/$nmod
 done
+%endif
 %endif
 %endif
 
