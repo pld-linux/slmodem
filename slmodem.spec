@@ -7,6 +7,11 @@
 %bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace module
 %bcond_with	verbose		# verbose build (V=1)
+
+%if %{without dist_kernel}
+%undefine with_smp
+%endif
+
 #
 Summary:	Smart Link soft modem drivers
 Summary(pl):	Sterowniki do modemów programowych Smart Link
@@ -161,7 +166,7 @@ install %{SOURCE2}	 $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 %endif
 
 %if %{with kernel}
-%if %{with dist_kernel}
+%if %{without dist_kernel}
 for mod in *-nondist.ko; do
 	nmod=$(echo "$mod" | sed -e 's#-nondist##g')
 	install $mod $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/$nmod
@@ -176,7 +181,6 @@ for mod in *-smp.ko; do
 	nmod=$(echo "$mod" | sed -e 's#-smp##g')
 	install $mod $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/$nmod
 done
-%endif
 %endif
 %endif
 
