@@ -29,7 +29,7 @@ case "$1" in
 	if [ ! -f /var/lock/subsys/slmodemd ]; then
 		msg_starting slmodemd
 		modprobe -s slamr
-		daemon /usr/sbin/slmodemd --make-pidfile --background --quiet -- -c $SLMODEMD_COUNTRY -g $SLMODEMD_GROUP -p $SLMODEMD_PERMS $SLMODEMD_OPTS /dev/$SLMODEMD_DEVICE
+		daemon /usr/sbin/slmodemd -c $SLMODEMD_COUNTRY -g $SLMODEMD_GROUP -p $SLMODEMD_PERMS $SLMODEMD_OPTS /dev/$SLMODEMD_DEVICE
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/slmodemd		
 	else
