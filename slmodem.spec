@@ -111,7 +111,7 @@ pakiet zawiera sterownik dla modemów USB opartych na SmartUSB56. J±dra SMP.
 
 %prep
 %setup -q
-%patch0 -p1
+#NOTFORFTP %patch0 -p1
 
 %build
 cd drivers
