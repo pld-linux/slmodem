@@ -29,6 +29,7 @@ Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Patch0:		%{name}-new-kernel-workaround.patch
 Patch1:		%{name}-%{version}-abby.patch
+Patch2:		%{name}-gcc4.patch
 URL:		http://www.smlink.com/
 %{?with_dist_kernel:BuildRequires:	kernel-module-build}
 BuildRequires:	%{kgcc_package}
@@ -114,6 +115,7 @@ pakiet zawiera sterownik dla modemów USB opartych na SmartUSB56. J±dra SMP.
 %setup -q
 #NOTFORFTP %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 cd drivers
