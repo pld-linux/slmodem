@@ -27,9 +27,9 @@ case "$1" in
 		msg_starting slmodemd
 		modprobe -s slamr
 		/usr/sbin/slmodemd -c $SLMODEMD_COUNTRY -g $SLMODEMD_GROUP -p $SLMODEMD_PERMS $SLMODEMD_OPTS /dev/$SLMODEMD_DEVICE < /dev/null > /dev/null 2>&1 &
-		deltext; ok		
+		deltext; ok
 		RETVAL=$?
-		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/slmodemd		
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/slmodemd
 	else
 		msg_already_running slmodemd
 	fi
@@ -41,7 +41,7 @@ case "$1" in
 		rm -f /var/run/clamav/slmodemd.pid /var/lock/subsys/slmodemd >/dev/null 2>&1
 	else
 		msg_not_running slmodemd
-	fi	
+	fi
 	;;
   restart)
 	$0 stop
