@@ -1,6 +1,6 @@
 # NOTE: no SMP drivers for now - I don't know if these binaries would work?
 # TODO: test it on SMP and add SMP modules or update above comment
-# 
+#
 # Conditional build:
 %bcond_without	dist_kernel	# without kernel from distribution
 %bcond_without	kernel		# don't build kernel modules
@@ -31,8 +31,8 @@ Patch0:		%{name}-new-kernel-workaround.patch
 Patch1:		%{name}-%{version}-abby.patch
 Patch2:		%{name}-gcc4.patch
 URL:		http://www.smlink.com/
-%{?with_dist_kernel:BuildRequires:	kernel-module-build}
 BuildRequires:	%{kgcc_package}
+%{?with_dist_kernel:BuildRequires:	kernel-module-build}
 BuildRequires:	rpmbuild(macros) >= 1.118
 ExclusiveArch:	%{ix86}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -109,7 +109,8 @@ driver for SmartUSB56 based USB modem. SMP kernels.
 
 %description -n kernel-smp-char-slmodem-usb -l pl
 Sterowniki j±dra Linuksa dla modemów programowych Smart Link. Ten
-pakiet zawiera sterownik dla modemów USB opartych na SmartUSB56. J±dra SMP.
+pakiet zawiera sterownik dla modemów USB opartych na SmartUSB56. J±dra
+SMP.
 
 %prep
 %setup -q
@@ -134,7 +135,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
 	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg Module.symvers
 	touch include/config/MARKER
-	
+
 	# patching/creating makefile(s) (optional)
 	%{__make} -C %{_kernelsrcdir} clean \
 		RCS_FIND_IGNORE="-name '*.ko' -o" \
@@ -237,7 +238,7 @@ fi
 %doc COPYING README* Changes
 %attr(755,root,root) %{_sbindir}/*
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
-%attr(640,root,root) %config(noreplace) %verify(not mtime md5 size) /etc/sysconfig/%{name}
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
 %dir %{_var}/lib/%{name}
 %endif
 
