@@ -12,23 +12,22 @@
 %undefine with_smp
 %endif
 
+define _snap	20051101
+
 #
-%define	rel	1
+%define	rel	0.%{_snap}.1
 Summary:	Smart Link soft modem drivers
+Summary(de):	Smart Link Software Modem Treiber
 Summary(pl):	Sterowniki do modemów programowych Smart Link
 Name:		slmodem
-Version:	2.9.10
+Version:	2.9.11
 Release:	%{rel}
 License:	BSD almost without source
 Group:		Base/Kernel
-# ftp://ftp.smlink.com/linux/unsupported/
-Source0:	http://www.smlink.com/main/down/%{name}-%{version}.tar.gz
-# Source0-md5:	cbc4918f2ee9ed4952d3f4309d364b35
+Source0:	http://linmodems.technion.ac.il/packages/smartlink/%{name}-%{version}-%{_snap}.tar.gz
+# Source0-md5:	94b5b505a9cddcd2d985c33e48f9d2e3
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
-Patch0:		%{name}-new-kernel-workaround.patch
-Patch1:		%{name}-%{version}-abby.patch
-Patch2:		%{name}-gcc4.patch
 URL:		http://www.smlink.com/
 BuildRequires:	%{kgcc_package}
 %{?with_dist_kernel:BuildRequires:	kernel-module-build}
@@ -41,11 +40,15 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %description
 Smart Link soft modem drivers.
 
+%description -l de
+Smart Link Software Modem Treiber.
+
 %description -l pl
 Sterowniki do modemów programowych Smart Link.
 
 %package -n kernel-char-slmodem-amr
 Summary:	Linux kernel driver for Smart Link soft modem AMR/PCI component
+Summary(de):	Linux Kernel Treiber für Smart Link AMR/PCI Software Modems
 Summary(pl):	Sterownik j±dra Linuksa dla elementu AMR/PCI modemów programowych Smart Link
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
@@ -57,6 +60,11 @@ Linux kernel drivers for Smart Link soft modem. This package contains
 driver for HAMR5600 based AMR/CNR/MDC/ACR modem cards and SmartPCI56,
 SmartPCI561 based PCI modem cards.
 
+%description -n kernel-char-slmodem-amr -l de
+Linux Kernel Treiber für Smart Link Software Modems. Dieses Packet
+enthält Treiber für HAMR5600 AMR/CNR/MDC/ACR basierende Modems und
+für SmartPCI56, SmartPCI561 PCI basierende Modems.
+
 %description -n kernel-char-slmodem-amr -l pl
 Sterowniki j±dra Linuksa dla modemów programowych Smart Link. Ten
 pakiet zawiera sterownik do opartych na HAMR5600 kart modemowych
@@ -64,6 +72,7 @@ AMR/CNR/MDC/ACR oraz kart PCI SmartPCI56 i SmartPCI561.
 
 %package -n kernel-char-slmodem-usb
 Summary:	Linux kernel driver for Smart Link soft modem USB component
+Summary(de):	Linux Kernel Trebier für Smart Link USB Software Modems
 Summary(pl):	Sterownik j±dra Linuksa dla elementu USB modemów programowych Smart Link
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
@@ -74,12 +83,17 @@ Requires(post,postun):	/sbin/depmod
 Linux kernel drivers for Smart Link soft modem. This package contains
 driver for SmartUSB56 based USB modem.
 
+%description -n kernel-char-slmodem-usb -l de
+Linux Kernel Treiber für Smart Link Software Modems. Dieses Packet
+enthält Treiber für SmartUSB56 basierende Modems.
+
 %description -n kernel-char-slmodem-usb -l pl
 Sterowniki j±dra Linuksa dla modemów programowych Smart Link. Ten
 pakiet zawiera sterownik dla modemów USB opartych na SmartUSB56.
 
 %package -n kernel-smp-char-slmodem-amr
 Summary:	Linux kernel driver for Smart Link soft modem AMR/PCI component (SMP)
+Summary(de):	Linux Kernel Treiber für Smart Link AMR/PCI Software Modems (SMP)
 Summary(pl):	Sterownik j±dra Linuksa dla elementu AMR/PCI modemów programowych Smart Link (SMP)
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
@@ -91,6 +105,11 @@ Linux kernel drivers for Smart Link soft modem. This package contains
 driver for HAMR5600 based AMR/CNR/MDC/ACR modem cards and SmartPCI56,
 SmartPCI561 based PCI modem cards. SMP kernels.
 
+%description -n kernel-smp-char-slmodem-amr -l de
+Linux Kernel Treiber für Smart Link Software Modems. Dieses Packet
+enthält Treiber für HAMR5600 AMR/CNR/MDC/ACR basierende Modems und
+für SmartPCI56, SmartPCI561 PCI basierende Modems. SMP Kernel Treiber.
+
 %description -n kernel-smp-char-slmodem-amr -l pl
 Sterowniki j±dra Linuksa dla modemów programowych Smart Link. Ten
 pakiet zawiera sterownik do opartych na HAMR5600 kart modemowych
@@ -98,6 +117,7 @@ AMR/CNR/MDC/ACR oraz kart PCI SmartPCI56 i SmartPCI561. J±dra SMP.
 
 %package -n kernel-smp-char-slmodem-usb
 Summary:	Linux kernel driver for Smart Link soft modem USB component (SMP)
+Summary(de):	Linux Kernel Trebier für Smart Link USB Software Modems (SMP)
 Summary(pl):	Sterownik j±dra Linuksa dla elementu USB modemów programowych Smart Link (SMP)
 Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
@@ -108,6 +128,10 @@ Requires(post,postun):	/sbin/depmod
 Linux kernel drivers for Smart Link soft modem. This package contains
 driver for SmartUSB56 based USB modem. SMP kernels.
 
+%description -n kernel-smp-char-slmodem-usb -l de
+Linux Kernel Treiber für Smart Link Software Modems. Dieses Packet
+enthält Treiber für SmartUSB56 basierende Modems. SMP Kernel Treiber.
+
 %description -n kernel-smp-char-slmodem-usb -l pl
 Sterowniki j±dra Linuksa dla modemów programowych Smart Link. Ten
 pakiet zawiera sterownik dla modemów USB opartych na SmartUSB56. J±dra
@@ -115,9 +139,6 @@ SMP.
 
 %prep
 %setup -q
-#NOTFORFTP %patch0 -p1
-%patch1 -p1
-%patch2 -p1
 
 %build
 cd drivers
