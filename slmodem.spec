@@ -12,7 +12,7 @@
 %undefine with_smp
 %endif
 
-define _snap	20051101
+%define _snap	20051101
 
 #
 %define	rel	0.%{_snap}.1
