@@ -138,7 +138,7 @@ pakiet zawiera sterownik dla modemów USB opartych na SmartUSB56. J±dra
 SMP.
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}-%{_snap}
 
 %build
 cd drivers
@@ -147,31 +147,28 @@ cp amrlibs.o ..
 %if %{with kernel}
 # kernel module(s)
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-		exit 1
-	fi
-	rm -rf include
-	install -d include/{linux,config}
-	ln -sf %{_kernelsrcdir}/config-$cfg .config
-	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
-	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
-	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg Module.symvers
-	touch include/config/MARKER
-
-	# patching/creating makefile(s) (optional)
-	%{__make} -C %{_kernelsrcdir} clean \
-		RCS_FIND_IGNORE="-name '*.ko' -o" \
-		M=$PWD O=$PWD \
-		%{?with_verbose:V=1}
-	ln -sf ../amrlibs.o amrlibs.o
-	%{__make} -C %{_kernelsrcdir} modules \
-		CC="%{__cc}" CPP="%{__cpp}" \
-		M=$PWD O=$PWD \
-		%{?with_verbose:V=1}
-	for mod in *.ko; do
-		mod=$(echo "$mod" | sed -e 's#\.ko##g')
-		mv $mod.ko ../$mod-$cfg.ko
-	done
+        if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+                exit 1
+        fi
+        install -d o/include/linux
+        ln -sf %{_kernelsrcdir}/config-$cfg o/.config
+        ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
+        ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
+        %{__make} -C %{_kernelsrcdir} O=$PWD/o prepare scripts
+        %{__make} -C %{_kernelsrcdir} clean \
+                RCS_FIND_IGNORE="-name '*.ko' -o" \
+                M=$PWD O=$PWD/o \
+                %{?with_verbose:V=1}
+        %{__make} -C %{_kernelsrcdir} modules \
+%if "%{_target_base_arch}" != "%{_arch}"
+                ARCH=%{_target_base_arch} \
+                CROSS_COMPILE=%{_target_base_cpu}-pld-linux- \
+%endif
+                HOSTCC="%{__cc}" \
+                CPP="%{__cpp}" \
+                M=$PWD O=$PWD/o \
+                %{?with_verbose:V=1}
+        mv sl*{,-$cfg}.ko
 done
 %endif
 
