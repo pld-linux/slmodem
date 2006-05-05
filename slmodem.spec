@@ -168,7 +168,8 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
                 CPP="%{__cpp}" \
                 M=$PWD O=$PWD/o \
                 %{?with_verbose:V=1}
-        mv sl*{,-$cfg}.ko
+        mv slamr{,-$cfg}.ko
+	mv slusb{,-$cfg}.ko
 done
 %endif
 
@@ -191,11 +192,15 @@ install %{SOURCE2}	 $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
-install drivers/*-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
-                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/*.ko
+install drivers/slamr-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
+                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/slamr.ko
+install drivers/slusb-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
+                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/slusb.ko
 %if %{with smp} && %{with dist_kernel}
-install drivers/*-smp.ko \
-                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/*.ko
+install drivers/slamr-smp.ko \
+                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/slamr.ko
+install drivers/slusb-smp.ko \
+                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/slusb.ko
 %endif
 %endif
 
