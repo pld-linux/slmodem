@@ -190,21 +190,12 @@ install %{SOURCE2}	 $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 %endif
 
 %if %{with kernel}
-%if %{without dist_kernel}
-for mod in *-nondist.ko; do
-	nmod=$(echo "$mod" | sed -e 's#-nondist##g')
-	install $mod $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/$nmod
-done
-%else
-for mod in *-up.ko; do
-	nmod=$(echo "$mod" | sed -e 's#-up##g')
-	install $mod $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/$nmod
-done
-%if %{with smp}
-for mod in *-smp.ko; do
-	nmod=$(echo "$mod" | sed -e 's#-smp##g')
-	install $mod $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/$nmod
-done
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
+install drivers/*-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
+                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/*.ko
+%if %{with smp} && %{with dist_kernel}
+install drivers/*-smp.ko \
+                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/*.ko
 %endif
 %endif
 
