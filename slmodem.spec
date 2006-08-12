@@ -147,28 +147,28 @@ cp amrlibs.o ..
 %if %{with kernel}
 # kernel module(s)
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-        if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-                exit 1
-        fi
-        install -d o/include/linux
-        ln -sf %{_kernelsrcdir}/config-$cfg o/.config
-        ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
-        ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
-        %{__make} -C %{_kernelsrcdir} O=$PWD/o prepare scripts
-        %{__make} -C %{_kernelsrcdir} clean \
-                RCS_FIND_IGNORE="-name '*.ko' -o" \
-                M=$PWD O=$PWD/o \
-                %{?with_verbose:V=1}
-        %{__make} -C %{_kernelsrcdir} modules \
+	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+		exit 1
+	fi
+	install -d o/include/linux
+	ln -sf %{_kernelsrcdir}/config-$cfg o/.config
+	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
+	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
+	%{__make} -C %{_kernelsrcdir} O=$PWD/o prepare scripts
+	%{__make} -C %{_kernelsrcdir} clean \
+		RCS_FIND_IGNORE="-name '*.ko' -o" \
+		M=$PWD O=$PWD/o \
+		%{?with_verbose:V=1}
+	%{__make} -C %{_kernelsrcdir} modules \
 %if "%{_target_base_arch}" != "%{_arch}"
-                ARCH=%{_target_base_arch} \
-                CROSS_COMPILE=%{_target_base_cpu}-pld-linux- \
+		ARCH=%{_target_base_arch} \
+		CROSS_COMPILE=%{_target_base_cpu}-pld-linux- \
 %endif
-                HOSTCC="%{__cc}" \
-                CPP="%{__cpp}" \
-                M=$PWD O=$PWD/o \
-                %{?with_verbose:V=1}
-        mv slamr{,-$cfg}.ko
+		HOSTCC="%{__cc}" \
+		CPP="%{__cpp}" \
+		M=$PWD O=$PWD/o \
+		%{?with_verbose:V=1}
+	mv slamr{,-$cfg}.ko
 	mv slusb{,-$cfg}.ko
 done
 %endif
@@ -193,14 +193,14 @@ install %{SOURCE2}	 $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
 install drivers/slamr-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
-                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/slamr.ko
+		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/slamr.ko
 install drivers/slusb-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
-                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/slusb.ko
+		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/slusb.ko
 %if %{with smp} && %{with dist_kernel}
 install drivers/slamr-smp.ko \
-                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/slamr.ko
+		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/slamr.ko
 install drivers/slusb-smp.ko \
-                $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/slusb.ko
+		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/slusb.ko
 %endif
 %endif
 
