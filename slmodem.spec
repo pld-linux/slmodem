@@ -12,7 +12,7 @@
 %undefine with_smp
 %endif
 
-%define _snap	20051101
+%define _snap	20060727
 
 #
 %define	rel	0.%{_snap}.1
@@ -24,8 +24,8 @@ Version:	2.9.11
 Release:	%{rel}
 License:	BSD almost without source
 Group:		Base/Kernel
-Source0:	http://linmodems.technion.ac.il/packages/smartlink/%{name}-%{version}-%{_snap}.tar.gz
-# Source0-md5:	94b5b505a9cddcd2d985c33e48f9d2e3
+Source0:	http://linmodems.technion.ac.il/packages/smartlink/%{name}-%{_snap}.tar.gz
+# Source0-md5:	a9291ff66a191a4a6188f6c33d3520ba
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 URL:		http://www.smlink.com/
@@ -138,7 +138,7 @@ pakiet zawiera sterownik dla modemów USB opartych na SmartUSB56. J±dra
 SMP.
 
 %prep
-%setup -q -n %{name}-%{version}-%{_snap}
+%setup -q -n %{name}-%{_snap}
 
 %build
 cd drivers
@@ -159,6 +159,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 		RCS_FIND_IGNORE="-name '*.ko' -o" \
 		M=$PWD O=$PWD/o \
 		%{?with_verbose:V=1}
+cp ../amrlibs.o .
 	%{__make} -C %{_kernelsrcdir} modules \
 %if "%{_target_base_arch}" != "%{_arch}"
 		ARCH=%{_target_base_arch} \
@@ -170,6 +171,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 		%{?with_verbose:V=1}
 	mv slamr{,-$cfg}.ko
 	mv slusb{,-$cfg}.ko
+
 done
 %endif
 
