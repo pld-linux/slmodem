@@ -24,8 +24,8 @@ Version:	2.9.11
 Release:	%{rel}
 License:	BSD almost without source
 Group:		Base/Kernel
-Source0:	http://linmodems.technion.ac.il/packages/smartlink/%{name}-%{_snap}.tar.gz
-# Source0-md5:	a9291ff66a191a4a6188f6c33d3520ba
+Source0:	http://linmodems.technion.ac.il/packages/smartlink/%{name}-%{version}-%{_snap}.tar.gz
+# Source0-md5:	ef7fa570699e1808eaa997b30b881917
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 URL:		http://www.smlink.com/
@@ -138,7 +138,7 @@ pakiet zawiera sterownik dla modemów USB opartych na SmartUSB56. J±dra
 SMP.
 
 %prep
-%setup -q -n %{name}-%{_snap}
+%setup -q -n %{name}-%{version}-%{_snap}
 
 %build
 cd drivers
