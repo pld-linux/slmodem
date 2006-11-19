@@ -12,7 +12,7 @@
 %undefine with_smp
 %endif
 
-%define _snap	20060727
+%define _snap	20061021
 
 #
 %define	rel	0.%{_snap}.1
@@ -25,7 +25,7 @@ Release:	%{rel}
 License:	BSD almost without source
 Group:		Base/Kernel
 Source0:	http://linmodems.technion.ac.il/packages/smartlink/%{name}-%{version}-%{_snap}.tar.gz
-# Source0-md5:	ef7fa570699e1808eaa997b30b881917
+# Source0-md5:	8e1858b0a6d16fce73966759732986ab
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 URL:		http://www.smlink.com/
