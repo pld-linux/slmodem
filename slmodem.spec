@@ -157,7 +157,7 @@ ln -s ../amrlibs.o amrlibs.o
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/etc/{rc.d/init.d,sysconfig}
-install -d $RPM_BUILD_ROOT{%{_sbindir},/lib/modules/%{_kernel_ver}{,smp}/misc,%{_var}/lib/%{name}}
+install -d $RPM_BUILD_ROOT{%{_sbindir},%{_var}/lib/%{name}}
 
 %if %{with userspace}
 install modem/slmodemd	 $RPM_BUILD_ROOT%{_sbindir}
