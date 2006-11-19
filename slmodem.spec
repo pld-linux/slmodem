@@ -8,10 +8,6 @@
 %bcond_without	userspace	# don't build userspace module
 %bcond_with	verbose		# verbose build (V=1)
 
-%if !%{with dist_kernel}
-%undefine with_smp
-%endif
-
 %define _snap	20061021
 
 #
