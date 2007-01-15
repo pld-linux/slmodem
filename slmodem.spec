@@ -1,6 +1,9 @@
 # NOTE: no SMP drivers for now - I don't know if these binaries would work?
 # TODO: test it on SMP and add SMP modules or update above comment
 #
+# - for 2.6.20 - symbols usb_deregister and usb_register_driver used by slusb.ko
+#   will be GPL-only in a future.
+# 
 # Conditional build:
 %bcond_without	dist_kernel	# without kernel from distribution
 %bcond_without	kernel		# don't build kernel modules
@@ -11,7 +14,7 @@
 %define _snap	20061021
 
 #
-%define	rel	0.%{_snap}.1
+%define	rel	0.%{_snap}.2
 Summary:	Smart Link soft modem drivers
 Summary(de):	Smart Link Software Modem Treiber
 Summary(pl):	Sterowniki do modemów programowych Smart Link
@@ -24,6 +27,9 @@ Source0:	http://linmodems.technion.ac.il/packages/smartlink/%{name}-%{version}-%
 # Source0-md5:	8e1858b0a6d16fce73966759732986ab
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
+# In 2.6.19 there was an interrupt handling infrastructure change - per cpu global struct pt_regs *
+# variable is used instead of passing it in irq handlers.
+Patch1:		%{name}-2.9.11-irq-global-pt_regs-2.6.19.patch
 URL:		http://www.smlink.com/
 BuildRequires:	%{kgcc_package}
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build}
@@ -135,6 +141,8 @@ SMP.
 
 %prep
 %setup -q -n %{name}-%{version}-%{_snap}
+
+%patch1 -p1
 
 %build
 cd drivers
