@@ -11,7 +11,7 @@
 %define _snap	20070813
 
 #
-%define	rel	0.%{_snap}.5
+%define	rel	0.%{_snap}.6
 Summary:	Smart Link soft modem drivers
 Summary(de.UTF-8):	Smart Link Software Modem Treiber
 Summary(pl.UTF-8):	Sterowniki do modemów programowych Smart Link
