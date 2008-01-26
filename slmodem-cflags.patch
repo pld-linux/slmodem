@@ -1,0 +1,13 @@
+diff -urN slmodem-2.9.11-20070813.orig/modem/Makefile slmodem-2.9.11-20070813/modem/Makefile
+--- slmodem-2.9.11-20070813.orig/modem/Makefile	2005-11-01 15:33:34.000000000 +0000
++++ slmodem-2.9.11-20070813/modem/Makefile	2008-01-26 10:10:01.000000000 +0000
+@@ -16,8 +16,7 @@
+ CC:= gcc
+ RM:= rm -f
+ 
+-CFLAGS+= -Wall -g -O -I. -DCONFIG_DEBUG_MODEM
+-
++CFLAGS:= -Wall -g -O -I. -DCONFIG_DEBUG_MODEM
+ 
+ modem-objs:= \
+ 	modem.o modem_datafile.o modem_at.o modem_timer.o \
