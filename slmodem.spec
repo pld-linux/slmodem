@@ -107,7 +107,7 @@ ln -s ../amrlibs.o amrlibs.o
 %if %{with userspace}
 %{__make} -C ../modem \
 	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags} -I. -DCONFIG_DEBUG_MODEM" \
+	CFLAGS="%{rpmcflags} -I. -DCONFIG_DEBUG_MODEM -DSUPPORT_ALSA" \
 	SUPPORT_ALSA=1
 %endif
 
