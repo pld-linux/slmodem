@@ -8,10 +8,13 @@
 %bcond_without	userspace	# don't build userspace module
 %bcond_with	verbose		# verbose build (V=1)
 
+%if %{without kernel}
+%undefine	with_dist_kernel
+%endif
+
 %define		subver	20070813
 %define		prel	0.%{subver}.6
 
-%define		rel	7
 Summary:	Smart Link soft modem drivers
 Summary(de.UTF-8):	Smart Link Software Modem Treiber
 Summary(pl.UTF-8):	Sterowniki do modemów programowych Smart Link
@@ -24,7 +27,9 @@ Source0:	http://linmodems.technion.ac.il/packages/smartlink/%{name}-%{version}-%
 # Source0-md5:	4e2eeb99d1fe7db939c0f5fbe05a1b01
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
+Patch0:		%{name}-cflags.patch
 URL:		http://www.smlink.com/
+%{?with_suerspace:BuildRequires:	alsa-lib-devel}
 BuildRequires:	%{kgcc_package}
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build}
 BuildRequires:	rpmbuild(macros) >= 1.330
@@ -101,7 +106,9 @@ ln -s ../amrlibs.o amrlibs.o
 
 %if %{with userspace}
 %{__make} -C ../modem \
-	CC="%{__cc}"
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags} -I. -DCONFIG_DEBUG_MODEM" \
+	SUPPORT_ALSA=1
 %endif
 
 %install
