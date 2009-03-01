@@ -13,7 +13,7 @@
 %endif
 
 %define		subver	20070813
-%define		rel	0.%{subver}.6
+%define		rel	0.%{subver}.7
 
 Summary:	Smart Link soft modem drivers
 Summary(de.UTF-8):	Smart Link Software Modem Treiber
@@ -35,6 +35,7 @@ BuildRequires:	%{kgcc_package}
 BuildRequires:	rpmbuild(macros) >= 1.330
 Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
+Requires:	setup >= 2.6.1-1
 ExclusiveArch:	%{ix86}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
